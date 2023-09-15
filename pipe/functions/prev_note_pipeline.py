@@ -1,21 +1,14 @@
-import pandas as pd
-import numpy as np
-
-# import re
-import spacy
+import collections
 import difflib
-
-# import more_itertools as mit
-# import nltk
 import json
-from tqdm import tqdm
-import stanza
-from scipy.stats import beta
 from itertools import groupby
 
-
+import numpy as np
+import pandas as pd
+import spacy
 from more_itertools import consecutive_groups
-import collections
+from scipy.stats import beta
+from tqdm import tqdm
 
 
 def get_note(_id, df):
@@ -31,7 +24,7 @@ def get_HPI(IBD_Fecal_Blood, ID):
         return 1
 
 
-# ### Previous Note Comparison Pipline Functions
+# ### Previous Note Comparison Pipeline Functions
 
 
 def get_text_from_range_list(doc1, ranges):
@@ -301,12 +294,3 @@ def add_period(character_ranges, note):
             end = end + 1
         new_ranges.append((start, end))
     return new_ranges
-
-
-# ### Evaluating Extraction Performance ###
-# taken from github/paulgb
-def binom_interval(success, total, confint=0.95):
-    quantile = (1 - confint) / 2.0
-    lower = beta.ppf(quantile, success, total - success + 1)
-    upper = beta.ppf(1 - quantile, success + 1, total - success)
-    return (lower, upper)
