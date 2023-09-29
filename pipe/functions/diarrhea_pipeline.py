@@ -5,7 +5,7 @@ from datetime import date, datetime, time
 from xml.dom import minidom
 
 import matplotlib.pyplot as plt
-import medspacy
+# import medspacy
 import numpy as np
 import pandas as pd
 import scispacy

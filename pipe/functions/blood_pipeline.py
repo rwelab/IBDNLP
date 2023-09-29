@@ -6,7 +6,7 @@ from datetime import date, datetime, time
 from xml.dom import minidom
 
 import matplotlib.pyplot as plt
-import medspacy
+# import medspacy
 import numpy as np
 import pandas as pd
 import spacy
@@ -18,7 +18,7 @@ from spacy.matcher import Matcher, PhraseMatcher
 from spacy.pipeline import EntityRuler
 from spacy.tokens import Span
 from spacy.util import filter_spans
-from tqdm import tqdm
+# from tqdm import tqdm
 
 row_names = [
     "Pain_ROS",

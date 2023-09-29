@@ -1,13 +1,13 @@
-import os
+# import os
 import re
 from datetime import date, datetime, time
-from xml.dom import minidom
+# from xml.dom import minidom
 
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import scispacy
-import spacy
+# import scispacy
+# import spacy
 
 
 # an exploratory function that searches for a an HPI/ROS questionnaire

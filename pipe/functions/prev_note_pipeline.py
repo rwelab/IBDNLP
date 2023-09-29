@@ -1,14 +1,14 @@
-import collections
+# import collections
 import difflib
-import json
+# import json
 from itertools import groupby
 
 import numpy as np
 import pandas as pd
 import spacy
 from more_itertools import consecutive_groups
-from scipy.stats import beta
-from tqdm import tqdm
+# from scipy.stats import beta
+# from tqdm import tqdm
 
 
 def get_note(_id, df):
