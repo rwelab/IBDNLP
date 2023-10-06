@@ -22,10 +22,30 @@ In the medical field, we have taken note of two points: 1) we have seen that the
 
 ## Getting Started
 
+Please begin by downloading the git repository. This can be done via download, or with the following line:
+
+```
+git clone https://github.com/rwelab/IBDNLP.git
+```
+
+
 ### Prerequisites
 
+This code was established using conda version 4.13.0, thus we recommend having this as the minimum conda version. Apart from this, all relevant packages needed to run this code have been included in the ```environment.yml``` file.
 
 ### Installation
+
+To begin, we highly recommend establishing a conda environment using the provided yml file:
+
+```
+conda env create -f environment.yml -n ENVIRON_NAME
+```
+
+This will create the environment with all relevant packages that were used to construct our pipeline. From there, we must also download two SpaCy models that will be used for tokenization and word vector comparison.
+
+```
+python install_spacy_models.py
+```
 
 
 ## Usage
