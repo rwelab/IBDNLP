@@ -50,3 +50,9 @@ python install_spacy_models.py
 
 ## Usage
 
+Once your environment has been set up, and all files have been downloaded, please reference the ```user_definition.py``` file and change the column names to suit your use case (these column names were used for the UCSF use case). This is also where you can specify the location of your ```data``` folder.
+
+Once this is done, the augmented data set can be created with the following steps:
+ - 1) create a ```data``` folder if not already done so
+ - 2) run this line in the ```pipe``` subfolder: ```python data_extraction.py YOUR_DATA_FILE_PATH```
+ - 3) wait for the pipeline to complete
