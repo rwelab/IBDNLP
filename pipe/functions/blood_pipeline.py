@@ -1,11 +1,12 @@
 import math
-import os
+# import os
 import re
+import sys
 import warnings
 from datetime import date, datetime, time
-from xml.dom import minidom
+# from xml.dom import minidom
 
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 # import medspacy
 import numpy as np
 import pandas as pd
@@ -20,7 +21,10 @@ from spacy.tokens import Span
 from spacy.util import filter_spans
 # from tqdm import tqdm
 
-row_names = [
+sys.path.append('../../pipe/')
+from pipe.user_definition import *
+
+row_names_pain = [
     "Pain_ROS",
     "pain_mention_Interval_History",
     "pain_mention_Previous_note",
@@ -87,7 +91,7 @@ def re_order(dictionary):
     return sorted_list, spans
 
 
-def find_blood(note):
+def find_blood_return_matches(note):
 
     if not isinstance(note, str):
         return np.nan, np.nan, np.nan
@@ -637,8 +641,8 @@ def return_abdominal_spacy():
     return nlp_spacy
 
 
-@Language.component("Multi_Word_NER")
-def Multi_Word_NER(doc):
+@Language.component("Multi_Word_Abdominal_NER")
+def Multi_Word_Abdominal_NER(doc):
 
     # text = doc.text
     # print(doc)
@@ -782,7 +786,7 @@ def Multi_Word_NER(doc):
 
 
 def add_pipe(nlp_spacy):
-    nlp_spacy.add_pipe("Multi_Word_NER", before="negex")
+    nlp_spacy.add_pipe("Multi_Word_Abdominal_NER", before="negex")
     return nlp_spacy
 
 
@@ -1262,7 +1266,7 @@ def present_tense(nlp_spacy, sentence, ent_label, ent_start):
             return True, "SIMPLE_PRESENT"
 
 
-def get_tense_negation(mentions, Label, nlp_spacy, note_id):
+def get_abdominal_tense_negation(mentions, Label, nlp_spacy, note_id):
 
     # print(note_id)
 
@@ -1371,147 +1375,147 @@ def encode_values(list_of_indices, value, df, column_name):
         df.at[index, column_name] = value
 
 
-def encode_column(df1, df2, column_to_encode, encoded_column_name, df_same):
+# def encode_column(df1, df2, column_to_encode, encoded_column_name, df_same):
 
-    values_list = df2[df2[column_to_encode].notnull()][column_to_encode]
-    values_index = values_list.index
+#     values_list = df2[df2[column_to_encode].notnull()][column_to_encode]
+#     values_index = values_list.index
 
-    encoded_values = []
+#     encoded_values = []
 
-    for index, values in zip(values_index, values_list):
-        # print(values)
-        Tenses = [value[2] for value in values]
-        # print(Tenses)
-        Blood_Values = [value[1] for value in values]
-        # print(Blood_Values, Blood_Values[0])
+#     for index, values in zip(values_index, values_list):
+#         # print(values)
+#         Tenses = [value[2] for value in values]
+#         # print(Tenses)
+#         Blood_Values = [value[1] for value in values]
+#         # print(Blood_Values, Blood_Values[0])
 
-        keywords = [value[0] for value in values]
+#         keywords = [value[0] for value in values]
 
-        if "CURRENT" in Tenses:
-            True_index = [
-                index for index, tense in enumerate(Tenses) if tense == "CURRENT"
-            ]
-            True_Blood_Values = [
-                value for index, value in enumerate(Blood_Values) if index in True_index
-            ]
+#         if "CURRENT" in Tenses:
+#             True_index = [
+#                 index for index, tense in enumerate(Tenses) if tense == "CURRENT"
+#             ]
+#             True_Blood_Values = [
+#                 value for index, value in enumerate(Blood_Values) if index in True_index
+#             ]
 
-            if len(True_index) == 1:
-                if True_Blood_Values[0] == True:
-                    encoded_values.append(int(1))
-                else:
-                    encoded_values.append(int(0))
-            else:
-                if len(set(True_Blood_Values)) == 1:
-                    if list(set(True_Blood_Values))[0] == True:
-                        encoded_values.append(int(1))
-                    else:
-                        encoded_values.append(int(0))
-                else:
-                    encoded_values.append(int(1))
+#             if len(True_index) == 1:
+#                 if True_Blood_Values[0] == True:
+#                     encoded_values.append(int(1))
+#                 else:
+#                     encoded_values.append(int(0))
+#             else:
+#                 if len(set(True_Blood_Values)) == 1:
+#                     if list(set(True_Blood_Values))[0] == True:
+#                         encoded_values.append(int(1))
+#                     else:
+#                         encoded_values.append(int(0))
+#                 else:
+#                     encoded_values.append(int(1))
 
-        elif "NO_VERB" in Tenses:
-            True_index = [
-                index for index, tense in enumerate(Tenses) if tense == "NO_VERB"
-            ]
-            True_Blood_Values = [
-                value for index, value in enumerate(Blood_Values) if index in True_index
-            ]
-            # print(True_Blood_Values[0])
-            if len(True_index) == 1:
-                # print('True_index', True_index)
-                if True_Blood_Values[0] == True:
-                    encoded_values.append(int(1))
-                else:
-                    encoded_values.append(int(0))
-            else:
-                if len(set(True_Blood_Values)) == 1:
-                    if list(set(True_Blood_Values))[0] == True:
-                        encoded_values.append(int(1))
-                    else:
-                        encoded_values.append(int(0))
-                else:
-                    encoded_values.append(int(1))
+#         elif "NO_VERB" in Tenses:
+#             True_index = [
+#                 index for index, tense in enumerate(Tenses) if tense == "NO_VERB"
+#             ]
+#             True_Blood_Values = [
+#                 value for index, value in enumerate(Blood_Values) if index in True_index
+#             ]
+#             # print(True_Blood_Values[0])
+#             if len(True_index) == 1:
+#                 # print('True_index', True_index)
+#                 if True_Blood_Values[0] == True:
+#                     encoded_values.append(int(1))
+#                 else:
+#                     encoded_values.append(int(0))
+#             else:
+#                 if len(set(True_Blood_Values)) == 1:
+#                     if list(set(True_Blood_Values))[0] == True:
+#                         encoded_values.append(int(1))
+#                     else:
+#                         encoded_values.append(int(0))
+#                 else:
+#                     encoded_values.append(int(1))
 
-        elif "SIMPLE_PRESENT" in Tenses:
-            True_index = [
-                index for index, tense in enumerate(Tenses) if tense == "SIMPLE_PRESENT"
-            ]
-            True_Blood_Values = [
-                value for index, value in enumerate(Blood_Values) if index in True_index
-            ]
+#         elif "SIMPLE_PRESENT" in Tenses:
+#             True_index = [
+#                 index for index, tense in enumerate(Tenses) if tense == "SIMPLE_PRESENT"
+#             ]
+#             True_Blood_Values = [
+#                 value for index, value in enumerate(Blood_Values) if index in True_index
+#             ]
 
-            if len(True_index) == 1:
-                if True_Blood_Values[0] == True:
-                    encoded_values.append(int(1))
-                else:
-                    encoded_values.append(int(0))
-            else:
-                if len(set(True_Blood_Values)) == 1:
-                    if list(set(True_Blood_Values))[0] == True:
-                        encoded_values.append(int(1))
+#             if len(True_index) == 1:
+#                 if True_Blood_Values[0] == True:
+#                     encoded_values.append(int(1))
+#                 else:
+#                     encoded_values.append(int(0))
+#             else:
+#                 if len(set(True_Blood_Values)) == 1:
+#                     if list(set(True_Blood_Values))[0] == True:
+#                         encoded_values.append(int(1))
 
-                    else:
-                        encoded_values.append(int(0))
-                else:
-                    encoded_values.append(int(1))
+#                     else:
+#                         encoded_values.append(int(0))
+#                 else:
+#                     encoded_values.append(int(1))
 
-        elif "PRESENT_PART" in Tenses:
-            True_index = [
-                index for index, tense in enumerate(Tenses) if tense == "PRESENT_PART"
-            ]
-            True_Blood_Values = [
-                value for index, value in enumerate(Blood_Values) if index in True_index
-            ]
-            # print(True_Blood_Values)
-            if len(True_index) == 1:
-                if True_Blood_Values[0] == True:
-                    encoded_values.append(int(1))
-                else:
-                    encoded_values.append(int(0))
-            else:
-                if len(set(True_Blood_Values)) == 1:
-                    if list(set(True_Blood_Values))[0] == True:
-                        encoded_values.append(int(1))
-                    else:
-                        encoded_values.append(int(0))
-                else:
-                    encoded_values.append(int(1))
+#         elif "PRESENT_PART" in Tenses:
+#             True_index = [
+#                 index for index, tense in enumerate(Tenses) if tense == "PRESENT_PART"
+#             ]
+#             True_Blood_Values = [
+#                 value for index, value in enumerate(Blood_Values) if index in True_index
+#             ]
+#             # print(True_Blood_Values)
+#             if len(True_index) == 1:
+#                 if True_Blood_Values[0] == True:
+#                     encoded_values.append(int(1))
+#                 else:
+#                     encoded_values.append(int(0))
+#             else:
+#                 if len(set(True_Blood_Values)) == 1:
+#                     if list(set(True_Blood_Values))[0] == True:
+#                         encoded_values.append(int(1))
+#                     else:
+#                         encoded_values.append(int(0))
+#                 else:
+#                     encoded_values.append(int(1))
 
-        elif "PRES_PERF_CON" in Tenses:
+#         elif "PRES_PERF_CON" in Tenses:
 
-            True_index = [
-                index for index, tense in enumerate(Tenses) if tense == "PRES_PERF_CON"
-            ]
-            True_Blood_Values = [
-                value for index, value in enumerate(Blood_Values) if index in True_index
-            ]
-            # print(True_Blood_Values[0])
+#             True_index = [
+#                 index for index, tense in enumerate(Tenses) if tense == "PRES_PERF_CON"
+#             ]
+#             True_Blood_Values = [
+#                 value for index, value in enumerate(Blood_Values) if index in True_index
+#             ]
+#             # print(True_Blood_Values[0])
 
-            if len(True_index) == 1:
-                if True_Blood_Values[0] == True:
-                    # print(True_Blood_Values[0])
-                    encoded_values.append(int(1))
-                else:
-                    encoded_values.append(int(0))
-            else:
-                if len(set(True_Blood_Values)) == 1:
-                    if list(set(True_Blood_Values))[0] == True:
-                        encoded_values.append(int(1))
+#             if len(True_index) == 1:
+#                 if True_Blood_Values[0] == True:
+#                     # print(True_Blood_Values[0])
+#                     encoded_values.append(int(1))
+#                 else:
+#                     encoded_values.append(int(0))
+#             else:
+#                 if len(set(True_Blood_Values)) == 1:
+#                     if list(set(True_Blood_Values))[0] == True:
+#                         encoded_values.append(int(1))
 
-                    else:
-                        encoded_values.append(int(0))
-                else:
-                    encoded_values.append(int(1))
+#                     else:
+#                         encoded_values.append(int(0))
+#                 else:
+#                     encoded_values.append(int(1))
 
-    if df_same == False:
-        id_list = []
-        for index in values_index:
-            id_list.append(df2["deid_note_id"][index])
+#     if df_same == False:
+#         id_list = []
+#         for index in values_index:
+#             id_list.append(df2["deid_note_id"][index])
 
-        values_index = get_index(id_list, df1)
+#         values_index = get_index(id_list, df1)
 
-    for index, value in zip(values_index, encoded_values):
-        df1.at[index, encoded_column_name] = value
+#     for index, value in zip(values_index, encoded_values):
+#         df1.at[index, encoded_column_name] = value
 
 
 def encode_column(df1, df2, column_to_encode, encoded_column_name, df_same):
@@ -1614,9 +1618,9 @@ def encode_column(df1, df2, column_to_encode, encoded_column_name, df_same):
     if df_same == False:
         id_list = []
         for index in values_index:
-            id_list.append(df2["deid_note_id"][index])
+            id_list.append(df2[id_column][index])
 
-        values_index = get_index(id_list, df1)
+        values_index = get_index_from_list(id_list, df1)
 
     for index, value in zip(values_index, encoded_values):
         df1.at[index, encoded_column_name] = value
@@ -1630,31 +1634,31 @@ def check_values(lst):
     return False
 
 
-def encode_column2(df1, df2, column_to_encode, encoded_column_name, df_same):
+# def encode_column2(df1, df2, column_to_encode, encoded_column_name, df_same):
 
-    values = df2[df2[column_to_encode].notnull()][column_to_encode]
-    values_index = values.index
+#     values = df2[df2[column_to_encode].notnull()][column_to_encode]
+#     values_index = values.index
 
-    encoded_values = []
+#     encoded_values = []
 
-    for index, values in zip(values_index, values):
-        if check_values(values) == True:
-            encoded_values.append(int(1))
+#     for index, values in zip(values_index, values):
+#         if check_values(values) == True:
+#             encoded_values.append(int(1))
 
-        elif check_values(values) == False:
-            encoded_values.append(int(0))
-        else:
-            raise ValueError("values take more than 2 types.")
+#         elif check_values(values) == False:
+#             encoded_values.append(int(0))
+#         else:
+#             raise ValueError("values take more than 2 types.")
 
-    if df_same == False:
-        id_list = []
-        for index in values_index:
-            id_list.append(df2["deid_note_id"][index])
+#     if df_same == False:
+#         id_list = []
+#         for index in values_index:
+#             id_list.append(df2["deid_note_id"][index])
 
-        values_index = get_index(id_list, df1)
+#         values_index = get_index(id_list, df1)
 
-    for index, value in zip(values_index, encoded_values):
-        df1.at[index, encoded_column_name] = value
+#     for index, value in zip(values_index, encoded_values):
+#         df1.at[index, encoded_column_name] = value
 
 
 def encode_column_ctakes(df, encoded_column_name):
@@ -1680,46 +1684,46 @@ def encode_column_ctakes(df, encoded_column_name):
         df.at[indices, encoded_column_name] = 0
 
 
-def find_previous_note(note_id, df):
+# def find_previous_note(note_id, df):
 
-    row = df[df["deid_note_id"] == note_id]
-    patient_id = row["deid_PatientDurableKey"]
-    date = row["deid_service_date_cdw"].values
+#     row = df[df["deid_note_id"] == note_id]
+#     patient_id = row["deid_PatientDurableKey"]
+#     date = row["deid_service_date_cdw"].values
 
-    patient_rows = df[df["deid_PatientDurableKey"] == patient_id.values[0]]
-    note_ids = patient_rows["deid_note_id"].values
-    dates = patient_rows["deid_service_date_cdw"].values
+#     patient_rows = df[df["deid_PatientDurableKey"] == patient_id.values[0]]
+#     note_ids = patient_rows["deid_note_id"].values
+#     dates = patient_rows["deid_service_date_cdw"].values
 
-    number_dates = len(dates)
+#     number_dates = len(dates)
 
-    # creates a dictionary with dates as keys for note ids
+#     # creates a dictionary with dates as keys for note ids
 
-    dates_dic = dict(zip(dates, note_ids))
+#     dates_dic = dict(zip(dates, note_ids))
 
-    # if there are more than one notes with patient id, finds all dates which are less than input date
+#     # if there are more than one notes with patient id, finds all dates which are less than input date
 
-    if len(dates) > 1:
-        previous_dates = []
-        for x in dates:
-            if x < date:
-                previous_dates.append(x)
+#     if len(dates) > 1:
+#         previous_dates = []
+#         for x in dates:
+#             if x < date:
+#                 previous_dates.append(x)
 
-        # sorts dates in ascending order
-        previous_dates = sorted(previous_dates)
+#         # sorts dates in ascending order
+#         previous_dates = sorted(previous_dates)
 
-    # returns input note id if there are no ther dates corresponding to patient ID
-    else:
-        return np.nan
+#     # returns input note id if there are no ther dates corresponding to patient ID
+#     else:
+#         return np.nan
 
-    # checks to see if there are any dates which were less than date of input note id, returns note_id if none
-    if len(previous_dates) > 0:
-        previous_date = previous_dates[-1]
+#     # checks to see if there are any dates which were less than date of input note id, returns note_id if none
+#     if len(previous_dates) > 0:
+#         previous_date = previous_dates[-1]
 
-    else:
-        return np.nan
+#     else:
+#         return np.nan
 
-    # returns note id coressponding to the highest date of those which fall behind input date
-    return dates_dic[previous_date]
+#     # returns note id coressponding to the highest date of those which fall behind input date
+#     return dates_dic[previous_date]
 
 
 def get_range(HPI_offset, HPI):
@@ -1728,77 +1732,9 @@ def get_range(HPI_offset, HPI):
     return lst
 
 
-def get_index(lst, df):
+def get_index_from_list(lst, df):
     lst_ = []
     for l in lst:
-        lst_.append(df[df["deid_note_id"] == l].index.values[0])
+        lst_.append(df[df[id_column] == l].index.values[0])
 
     return lst_
-
-
-### Function drops entity mentions that fall within the first 40% character range of the HPI
-
-
-def get_mention_location(HPI, mentions, spans, keywords):
-
-    count = 0
-
-    if isinstance(mentions, list) and len(mentions) is not 0:
-        character_length = float(len(HPI))
-        # print(character_length)
-
-        for index, mention in enumerate(mentions):
-            # print(mention)
-            doc_location = float(spans[index]) / character_length
-            # print(doc_location)
-            if doc_location < 0.3:
-                del mentions[index - count]
-                del keywords[index - count]
-                count += 1
-
-    return mentions, keywords
-
-
-def consolidate_columns(row_names, master_column, df):
-    conflicting_rows = []
-
-    for index, row in df.iterrows():
-        # print(row[row_names[0]])
-        if not math.isnan(row[row_names[0]]):
-            # print(row[row_names[0]])
-            df.at[index, master_column] = row[row_names[0]]
-            continue
-        elif not math.isnan(row[row_names[1]]):  # pain_mention_Interval_History
-            if not math.isnan(row[row_names[2]]):  #'pain_mention_Previous_note'
-                if row[row_names[1]] == row[row_names[2]]:
-                    df.at[index, master_column] = row[
-                        row_names[1]
-                    ]  # pain_mention_Interval_History
-                    continue
-                else:
-                    df.at[index, master_column] = row[
-                        row_names[1]
-                    ]  # pain_mention_Interval_History
-                    conflicting_rows.append(index)
-                    continue
-            else:
-                df.at[index, master_column] = row[
-                    row_names[1]
-                ]  # pain_mention_Interval_History
-                continue
-
-        elif (
-            not math.isnan(row[row_names[2]])
-            and not type(row["Interval_History"]) == str
-        ):  #'pain_mention_Previous_note'
-            df.at[index, master_column] = row[
-                row_names[2]
-            ]  #'pain_mention_Previous_note'
-            continue
-
-        else:
-            if not math.isnan(row[row_names[3]]):
-                df.at[index, master_column] = row[row_names[3]]
-                continue
-
-    return conflicting_rows

@@ -1,4 +1,5 @@
 # import collections
+import sys
 import difflib
 # import json
 from itertools import groupby
@@ -10,16 +11,18 @@ from more_itertools import consecutive_groups
 # from scipy.stats import beta
 # from tqdm import tqdm
 
+sys.path.append('../../pipe/')
+from pipe.user_definition import *
 
 def get_note(_id, df):
-    row = df[df["deid_note_id"] == _id]
-    return row["note"].values[0]
+    row = df[df[id_column] == _id]
+    return row[note_column].values[0]
 
 
 # simple function which returns the HPI text from its note ID
 def get_HPI(IBD_Fecal_Blood, ID):
     try:
-        return IBD_Fecal_Blood[IBD_Fecal_Blood["deid_note_id"] == ID]["HPI"].values[0]
+        return IBD_Fecal_Blood[IBD_Fecal_Blood[id_column] == ID]["HPI"].values[0]
     except:
         return 1
 
@@ -48,18 +51,6 @@ def get_text_from_range_list(doc1, ranges):
 """ 
 this function takes a list of character ranges as input and modifies the range 
 """
-
-
-def modify_range(range_list):
-    ranges = []
-    gb = groupby(enumerate(range_list), key=lambda x: x[0] - x[1])
-    all_groups = ([i[1] for i in g] for _, g in gb)
-    x = list(filter(lambda x: len(x) > 1, all_groups))
-
-    for lists in x:
-        ranges.append([lists[0], lists[-1]])
-
-    return ranges
 
 
 def modify_ranges(set_list):
@@ -214,20 +205,20 @@ def convert_offset(doc, ranges, HPI_offset):
     return character_offsets
 
 
-def remove_duplicates(range_list):
-    set_list = []
+# def remove_duplicates(range_list):
+#     set_list = []
 
-    if len(range_list) == 1:
-        return range_list
+#     if len(range_list) == 1:
+#         return range_list
 
-    for range_ in range_list:
-        set_list += range(range_[0], range_[1])
+#     for range_ in range_list:
+#         set_list += range(range_[0], range_[1])
 
-    set_list = list(set(set_list))
+#     set_list = list(set(set_list))
 
-    set_list = modify_ranges(set_list)
+#     set_list = modify_ranges(set_list)
 
-    return set_list
+#     return set_list
 
 
 def tail_test(ranges, tokens):

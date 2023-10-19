@@ -50,9 +50,22 @@ python install_spacy_models.py
 
 ## Usage
 
-Once your environment has been set up, and all files have been downloaded, please reference the ```user_definition.py``` file and change the column names to suit your use case (these column names were used for the UCSF use case). This is also where you can specify the location of your ```data``` folder.
+Once your environment has been set up, and all files have been downloaded, please reference the ```user_definition.py``` file and change the column names to suit your use case. For reference, the following columns were used to develop and train our models:
+ - "note": the text of the note itself
+ - "deid_note_id":
+ - "deid_note_key":
+ - "deid_PatientDurableKey":
+ - "deid_service_date_cdw": service date for the patient's visit/medical appointment
+ - "Age": age of the patient
+ - "crohns":
+ - "ulc_colitis":
+
+This is also where you can specify the location of your ```data``` folder.
 
 Once this is done, the augmented data set can be created with the following steps:
- - 1) create a ```data``` folder if not already done so
- - 2) run this line in the ```pipe``` subfolder: ```python data_extraction.py YOUR_DATA_FILE_PATH```
- - 3) wait for the pipeline to complete
+ - 1) Create a ```data``` folder if not already done so
+ - 2) Run this line in the ```pipe``` subfolder: 
+ ```
+ python data_extraction.py YOUR_DATA_FILE_PATH
+ ```
+ - 3) Wait for the pipeline to complete

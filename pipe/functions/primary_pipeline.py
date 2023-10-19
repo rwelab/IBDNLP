@@ -1,4 +1,5 @@
 # import os
+import sys
 import re
 from datetime import date, datetime, time
 # from xml.dom import minidom
@@ -9,6 +10,8 @@ import pandas as pd
 # import scispacy
 # import spacy
 
+sys.path.append('../../pipe/')
+from pipe.user_definition import *
 
 # an exploratory function that searches for a an HPI/ROS questionnaire
 
@@ -52,18 +55,6 @@ def clean_tail(HPI):
         return re.search(r"(.*?) past $", HPI, re.IGNORECASE).group(1)
     except:
         return HPI
-
-
-# finds blood in your stool ROS question and returns the response
-
-
-def get_fecal_answer1(note):
-    try:
-        return re.search(
-            r".*? blood in your stool\:\s(.*?)\s", note, re.IGNORECASE
-        ).group(1)
-    except:
-        return None
 
 
 # finds blood in your stool ROS question and returns the response
@@ -203,132 +194,59 @@ def removekey(d, key):
 
 
 def get_index(note_id, df):
-    return df[df["deid_note_id"] == note_id].index.values[0]
+    return df[df[note_column] == note_id].index.values[0]
 
 
 # ### Exploring Previous Note Comparison for Extraction ###
 
 
-def find_previous_note(note_id, df):
+# def find_previous_note(note_id, df):
 
-    row = df[df["deid_note_id"] == note_id]
-    patient_id = row["deid_PatientDurableKey"]
-    date = row["deid_service_date_cdw"].values
+#     row = df[df[note_column] == note_id]
+#     patient_id = row[patient_durable_key]
+#     date = row[service_date].values
 
-    patient_rows = df[df["deid_PatientDurableKey"] == patient_id.values[0]]
-    note_ids = patient_rows["deid_note_id"].values
-    dates = patient_rows["deid_service_date_cdw"].values
+#     patient_rows = df[df[patient_durable_key] == patient_id.values[0]]
+#     note_ids = patient_rows[note_column].values
+#     dates = patient_rows[service_date].values
 
-    number_dates = len(dates)
+#     number_dates = len(dates)
 
-    # creates a dictionary with dates as keys for note ids
+#     # creates a dictionary with dates as keys for note ids
 
-    dates_dic = dict(zip(dates, note_ids))
+#     dates_dic = dict(zip(dates, note_ids))
 
-    # if there are more than one notes with patient id, finds all dates which are less than input date
+#     # if there are more than one notes with patient id, finds all dates which are less than input date
 
-    if len(dates) > 1:
-        previous_dates = []
-        for x in dates:
-            if x < date:
-                previous_dates.append(x)
+#     if len(dates) > 1:
+#         previous_dates = []
+#         for x in dates:
+#             if x < date:
+#                 previous_dates.append(x)
 
-        # sorts dates in ascending order
-        previous_dates = sorted(previous_dates)
+#         # sorts dates in ascending order
+#         previous_dates = sorted(previous_dates)
 
-    # returns input note id if there are no ther dates corresponding to patient ID
-    else:
-        return 1
+#     # returns input note id if there are no ther dates corresponding to patient ID
+#     else:
+#         return 1
 
-    # checks to see if there are any dates which were less than date of input note id, returns note_id if none
-    if len(previous_dates) > 0:
-        previous_date = previous_dates[-1]
+#     # checks to see if there are any dates which were less than date of input note id, returns note_id if none
+#     if len(previous_dates) > 0:
+#         previous_date = previous_dates[-1]
 
-    else:
-        return 1
+#     else:
+#         return 1
 
-    # returns note id coressponding to the highest date of those which fall behind input date
-    return dates_dic[previous_date]
-
-
-def remove_spacy(note):
-    return re.sub(" +", " ", note)
-
-
-# function uses find previous note to return both note texts, note2 is the previous note
-def get_notes(note_id, df):
-
-    # grabs note from input note_id
-    note1_row = df[df["deid_note_id"] == note_id]
-    note1 = note1_row["HPI"].values[0]
-
-    # gets previous note of input
-    note_id_2 = find_previous_note(note_id, df)
-
-    # grabs the note itself of the previous note id
-    note2_row = df[df["deid_note_id"] == note_id_2]
-    note2 = note2_row["HPI"].values[0]
-
-    note1 = remove_spacy(note1)
-    note2 = remove_spacy(note2)
-
-    return note1, note2
-
-
-def Explore_Events(note):
-    try:
-        word = re.search(r"\s(\w+)\s*?(event:|history:)", note, re.IGNORECASE).group(1)
-        return word.lower()
-    except:
-        return 1
-
-
-def Explore_IBD_Events(note):
-    try:
-        word = re.search(
-            r"\s(\w+)\s*?ibd\s*(event:|history:)", note, re.IGNORECASE
-        ).group(1)
-        return word.lower()
-    except:
-        return 1
-
-
-def Date_Interval_Explore(note):
-    try:
-        return re.search(r"\d\d\d\d:", note).group(0)
-    except:
-        return 1
+#     # returns note id coressponding to the highest date of those which fall behind input date
+#     return dates_dic[previous_date]
 
 
 # ### Applying Interval History Parser      ###
 
 
 # extracts the last instance of Interval History header and gets the subsequent text---
-def find_IntervalHistory(HPI, HPI_offset):
-    if isinstance(HPI, str):
-
-        try:
-            r = re.search(
-                r"(?: interval[ ]{1,}(?:History|Event|hx)|Interim(?: History| Event| Hx)?|20\d\d:)(.*?)\Z",
-                HPI,
-                re.IGNORECASE,
-            )
-            print(r)
-            y = int(r.start(1) + HPI_offset)
-            x = r.group(1)
-            d = int(len(x) + y)
-
-            return [x, [[y, d]]]
-
-        except:
-
-            return [1, 1]
-    else:
-        return [1, 1]
-
-
-# extracts the last instance of Interval History header and gets the subsequent text---
-def find_IntervalHistory2(text, HPI_offset):
+def find_IntervalHistory(text, HPI_offset):
     if isinstance(text, str):
 
         count = 0
@@ -363,15 +281,15 @@ def find_IntervalHistory2(text, HPI_offset):
 
 
 def get_noteid_fromkey(note_key, df):
-    row = df[df["deid_note_key"] == note_key]
-    note_id = row["deid_note_id"].values[0]
+    row = df[df[key_column] == note_key]
+    note_id = row[note_column].values[0]
     return note_id
 
 
 # # Extract Blood Mentions #
 
 
-def re_order(dictionary):
+def blood_re_order(dictionary):
     keys = list(dictionary.keys())
     keys = sorted(keys)
 
@@ -401,7 +319,7 @@ def find_blood_two(note):
         except:
             continue
 
-    ordered_matches = re_order(matches)
+    ordered_matches = blood_re_order(matches)
 
     return ordered_matches
 

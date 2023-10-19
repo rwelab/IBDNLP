@@ -1,10 +1,11 @@
-import math
 import os
+import sys
 import re
+import math
 from datetime import date, datetime, time
 from xml.dom import minidom
 
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 # import medspacy
 import numpy as np
 import pandas as pd
@@ -23,6 +24,8 @@ from spacy.util import filter_spans
 from tqdm import tqdm
 from word2number import w2n
 
+sys.path.append('../../pipe/')
+from pipe.user_definition import *
 
 row_names_dia = [
     "Dia_ROS",
@@ -159,8 +162,8 @@ def return_diarrhea_spacy():
 # ### Custom Spacy Components ###
 
 
-@Language.component("Multi_Word_NER")
-def Multi_Word_NER(doc):
+@Language.component("Multi_Word_Diarrhea_NER")
+def Multi_Word_Diarrhea_NER(doc):
 
     # text = doc.text
     # print(doc)
@@ -518,11 +521,7 @@ def Bristol_Score_NER(doc):
     return doc
 
 
-def add_pipes(nlp_spacy):
-    nlp_spacy.add_pipe("Bristol_Score_NER", before="negex")
-    nlp_spacy.add_pipe("Stool_Range_NER", before="negex")
-    nlp_spacy.add_pipe("Multi_Word_NER", before="negex")
-    return nlp_spacy
+
 
 
 @Language.component("Stool_Range_NER")
@@ -664,6 +663,12 @@ def Stool_Range_NER(doc):
 
     return doc
 
+def add_pipes(nlp_spacy):
+    nlp_spacy.add_pipe("Bristol_Score_NER", before="negex")
+    nlp_spacy.add_pipe("Stool_Range_NER", before="negex")
+    nlp_spacy.add_pipe("Multi_Word_Diarrhea_NER", before="negex")
+    return nlp_spacy
+
 
 ### ###
 
@@ -683,20 +688,20 @@ def get_line(note):
         return np.nan
 
 
-def collapse_function(set_of_ids, df_grouped):
+# def collapse_function(set_of_ids, df_grouped):
 
-    table = pd.DataFrame(columns=["note_id", "note_ur"])
+#     table = pd.DataFrame(columns=["note_id", "note_ur"])
 
-    for id_ in set_of_ids:
-        note_text = ""
-        id_rows = df_grouped[df_grouped["note_id"] == id_]["note_ur"].values
-        id_rows.sort_values
-        for value in id_rows:
-            note_text += value
+#     for id_ in set_of_ids:
+#         note_text = ""
+#         id_rows = df_grouped[df_grouped["note_id"] == id_]["note_ur"].values
+#         id_rows.sort_values
+#         for value in id_rows:
+#             note_text += value
 
-        table = table.append({"note_id": id_, "note_ur": note_text}, ignore_index=True)
+#         table = table.append({"note_id": id_, "note_ur": note_text}, ignore_index=True)
 
-    return table
+#     return table
 
 
 def find_diarrhea(note):
@@ -784,44 +789,44 @@ def find_diarrhea(note):
     return ordered_matches, keywords, spans
 
 
-def get_adj(sentence, nlp_spacy):
+# def get_adj(sentence, nlp_spacy):
 
-    positive_indicators = [
-        r"loose[a-zA-Z]*",
-        r"water[a-zA-Z]*",
-        r"frequent[a-zA-Z]*",
-        r"liquid[a-zA-Z]*",
-        "semi[ ]{1,}form[a-zA-Z]*",
-        r"unform[a-zA-Z]*",
-    ]
+#     positive_indicators = [
+#         r"loose[a-zA-Z]*",
+#         r"water[a-zA-Z]*",
+#         r"frequent[a-zA-Z]*",
+#         r"liquid[a-zA-Z]*",
+#         "semi[ ]{1,}form[a-zA-Z]*",
+#         r"unform[a-zA-Z]*",
+#     ]
 
-    adj_negation = [r"^form[a-zA-Z]*", r"normal", r" hard"]
+#     adj_negation = [r"^form[a-zA-Z]*", r"normal", r" hard"]
 
-    ### remove / and other special characters
-    # sentence = preprocessing(sentence)
+#     ### remove / and other special characters
+#     # sentence = preprocessing(sentence)
 
-    doc = nlp_spacy(sentence)
+#     doc = nlp_spacy(sentence)
 
-    # doc = retokenize_ent(diarrhea_bag_of_words, sentence, doc, 'Diarrhea')
-    # doc = retokenize_ent(bag_of_words_gen, sentence, doc, 'Stool_Gen')
-    # doc = retokenize_ent(adj_bag, sentence, doc, 'ADJ')
+#     # doc = retokenize_ent(diarrhea_bag_of_words, sentence, doc, 'Diarrhea')
+#     # doc = retokenize_ent(bag_of_words_gen, sentence, doc, 'Stool_Gen')
+#     # doc = retokenize_ent(adj_bag, sentence, doc, 'ADJ')
 
-    # print(doc.ents)
+#     # print(doc.ents)
 
-    sentence_words = [word.text for word in doc]
+#     sentence_words = [word.text for word in doc]
 
-    # print(sentence_words)
+#     # print(sentence_words)
 
-    # print([doc.label_ for doc in doc.ents])
-    result, indicator_word_1 = check_word(positive_indicators, sentence_words)
-    neg_result, indicator_word_2 = check_word(adj_negation, sentence_words)
+#     # print([doc.label_ for doc in doc.ents])
+#     result, indicator_word_1 = check_word(positive_indicators, sentence_words)
+#     neg_result, indicator_word_2 = check_word(adj_negation, sentence_words)
 
-    if result == True:
-        return True, indicator_word_1
-    elif neg_result == True:
-        return True, indicator_word_2
-    else:
-        return False, None
+#     if result == True:
+#         return True, indicator_word_1
+#     elif neg_result == True:
+#         return True, indicator_word_2
+#     else:
+#         return False, None
 
 
 def get_adjective(sentence, nlp_spacy):
@@ -1170,111 +1175,111 @@ def check_spans_overlap(current_span, list_of_spans):
             return True
 
 
-def get_closest_number(num_matches, bm_match):
+# def get_closest_number(num_matches, bm_match):
 
-    num_matches_span = [num[1][0] for num in num_matches]
+#     num_matches_span = [num[1][0] for num in num_matches]
 
-    # print('num_match_span', num_matches_span)
+#     # print('num_match_span', num_matches_span)
 
-    final_matches = []
+#     final_matches = []
 
-    match_loc_diff = 1000
-    current_favorite = np.nan
+#     match_loc_diff = 1000
+#     current_favorite = np.nan
 
-    for index, num_match in enumerate(num_matches_span):
-        # print('index', index)
-        # print('num_match', num_match)
-        # print('bm_match', bm_match)
+#     for index, num_match in enumerate(num_matches_span):
+#         # print('index', index)
+#         # print('num_match', num_match)
+#         # print('bm_match', bm_match)
 
-        match_loc_diff_test = abs(float(num_match) - float(bm_match))
-        # print('loc_diff', match_loc_diff_test)
+#         match_loc_diff_test = abs(float(num_match) - float(bm_match))
+#         # print('loc_diff', match_loc_diff_test)
 
-        if match_loc_diff_test < match_loc_diff:
-            match_loc_diff = match_loc_diff_test
-            current_favorite = index
+#         if match_loc_diff_test < match_loc_diff:
+#             match_loc_diff = match_loc_diff_test
+#             current_favorite = index
 
-    final_matches.append(num_matches[current_favorite])
-    # print('final_matches', final_matches)
+#     final_matches.append(num_matches[current_favorite])
+#     # print('final_matches', final_matches)
 
-    return final_matches
-
-
-def find_clinical_remission(note):
-
-    if not isinstance(note, str):
-        return np.nan, np.nan, np.nan
-
-    bag_of_words = [
-        "clin[a-zA-Z]*[ ]{1,}rem[a-zA-Z]*",
-        "quiescent",
-        "symptomatic[ ]{1,}remission",
-    ]
-    matches = {}
-    keywords = []
-
-    note = preprocessing(note)
-
-    for word in bag_of_words:
-
-        regex = r"[^.]*" + word + r"[^.]*\."
-        try:
-            trial = re.finditer(regex, note, re.IGNORECASE)
-
-            for match in trial:
-                span = match.span()
-                matches[span[1]] = match.group(0)
-                keywords.append(word)
-
-        except:
-            continue
-
-    ordered_matches, spans = re_order(matches)
-
-    if len(ordered_matches) == 0:
-        return np.nan, np.nan, np.nan
-
-    return ordered_matches, keywords, spans
+#     return final_matches
 
 
-def find_no_symptoms(note):
+# def find_clinical_remission(note):
 
-    if not isinstance(note, str):
-        return np.nan, np.nan, np.nan
+#     if not isinstance(note, str):
+#         return np.nan, np.nan, np.nan
 
-    bag_of_words = [
-        "doing[ ]{1,}well",
-        "asymptomatic[a-zA-Z]*",
-        "(no|w/o)[ ]{1,}sx[a-zA-Z]*",
-        "no[ ]{1,}complaint",
-        "gi[ ]{1,}(issue[a-zA-Z]*|complaint[a-zA-Z]*|symptom[a-zA-Z]*)",
-        "normal[ ]{1,}(bm[a-zA-Z]*|bowel[a-zA-Z]*)",
-        "feel[a-zA-Z]*[ ]{1,}well",
-    ]
-    matches = {}
-    keywords = []
+#     bag_of_words = [
+#         "clin[a-zA-Z]*[ ]{1,}rem[a-zA-Z]*",
+#         "quiescent",
+#         "symptomatic[ ]{1,}remission",
+#     ]
+#     matches = {}
+#     keywords = []
 
-    note = preprocessing(note)
+#     note = preprocessing(note)
 
-    for word in bag_of_words:
+#     for word in bag_of_words:
 
-        regex = r"[^.]*" + word + r"[^.]*\."
-        try:
-            trial = re.finditer(regex, note, re.IGNORECASE)
+#         regex = r"[^.]*" + word + r"[^.]*\."
+#         try:
+#             trial = re.finditer(regex, note, re.IGNORECASE)
 
-            for match in trial:
-                span = match.span()
-                matches[span[1]] = match.group(0)
-                keywords.append(word)
+#             for match in trial:
+#                 span = match.span()
+#                 matches[span[1]] = match.group(0)
+#                 keywords.append(word)
 
-        except:
-            continue
+#         except:
+#             continue
 
-    ordered_matches, spans = re_order(matches)
+#     ordered_matches, spans = re_order(matches)
 
-    if len(ordered_matches) == 0:
-        return np.nan, np.nan, np.nan
+#     if len(ordered_matches) == 0:
+#         return np.nan, np.nan, np.nan
 
-    return ordered_matches, keywords, spans
+#     return ordered_matches, keywords, spans
+
+
+# def find_no_symptoms(note):
+
+#     if not isinstance(note, str):
+#         return np.nan, np.nan, np.nan
+
+#     bag_of_words = [
+#         "doing[ ]{1,}well",
+#         "asymptomatic[a-zA-Z]*",
+#         "(no|w/o)[ ]{1,}sx[a-zA-Z]*",
+#         "no[ ]{1,}complaint",
+#         "gi[ ]{1,}(issue[a-zA-Z]*|complaint[a-zA-Z]*|symptom[a-zA-Z]*)",
+#         "normal[ ]{1,}(bm[a-zA-Z]*|bowel[a-zA-Z]*)",
+#         "feel[a-zA-Z]*[ ]{1,}well",
+#     ]
+#     matches = {}
+#     keywords = []
+
+#     note = preprocessing(note)
+
+#     for word in bag_of_words:
+
+#         regex = r"[^.]*" + word + r"[^.]*\."
+#         try:
+#             trial = re.finditer(regex, note, re.IGNORECASE)
+
+#             for match in trial:
+#                 span = match.span()
+#                 matches[span[1]] = match.group(0)
+#                 keywords.append(word)
+
+#         except:
+#             continue
+
+#     ordered_matches, spans = re_order(matches)
+
+#     if len(ordered_matches) == 0:
+#         return np.nan, np.nan, np.nan
+
+#     return ordered_matches, keywords, spans
 
 
 def check_ranges(range_list, current_range):
@@ -1330,7 +1335,7 @@ def get_closest_number(num_matches, bm_match):
     return final_matches
 
 
-def present_tense(nlp_spacy, sentence, ent_label, ent_start):
+def diarrhea_present_tense(nlp_spacy, sentence, ent_label, ent_start):
 
     present_tense_verbs = ["VBP", "VBZ"]
     present_participle = ["VBG"]
@@ -1592,126 +1597,126 @@ def binary_negation(value):
         return 0
 
 
-def get_tense_negation(mentions, Label, nlp_spacy):
+# def get_tense_negation(mentions, Label, nlp_spacy):
 
-    if not isinstance(mentions, list):
-        return np.nan
+#     if not isinstance(mentions, list):
+#         return np.nan
 
-    if Label == "range":
+#     if Label == "range":
 
-        span_text = [item[1] for item in mentions]
-        mentions = [item[0] for item in mentions]
+#         span_text = [item[1] for item in mentions]
+#         mentions = [item[0] for item in mentions]
 
-    negation = []
+#     negation = []
 
-    present_tense_true_neg = np.nan
-    Tense_2 = np.nan
+#     present_tense_true_neg = np.nan
+#     Tense_2 = np.nan
 
-    for index, mention in enumerate(mentions):
+#     for index, mention in enumerate(mentions):
 
-        try:
-            # print(mention)
-            mention = re.sub(r"\*", "", mention)
-            mention = re.sub(r"nb", "n b", mention, re.IGNORECASE)
-            # print(mention)
-            temp = []
-            # if keyword == 'PAIN_GEN' or keyword == 'cramp':
-            # print(True)
-            # Label = 'PAIN_GEN'
-            if Label == "range":
-                # span_text = kwargs.get('span_text', None)
-                present_tense_true, Tense = present_tense(nlp_spacy, mention, "range")
-                # print(present_tense_true)
-            elif Label == "Diarrhea":
-                # print()
-                present_tense_true, Tense = present_tense(nlp_spacy, mention, Label)
+#         try:
+#             # print(mention)
+#             mention = re.sub(r"\*", "", mention)
+#             mention = re.sub(r"nb", "n b", mention, re.IGNORECASE)
+#             # print(mention)
+#             temp = []
+#             # if keyword == 'PAIN_GEN' or keyword == 'cramp':
+#             # print(True)
+#             # Label = 'PAIN_GEN'
+#             if Label == "range":
+#                 # span_text = kwargs.get('span_text', None)
+#                 present_tense_true, Tense = diarrhea_present_tense(nlp_spacy, mention, "range")
+#                 # print(present_tense_true)
+#             elif Label == "Diarrhea":
+#                 # print()
+#                 present_tense_true, Tense = diarrhea_present_tense(nlp_spacy, mention, Label)
 
-                present_tense_true_neg, Tense_2 = present_tense(
-                    nlp_spacy, mention, "Diarrhea_neg"
-                )
+#                 present_tense_true_neg, Tense_2 = diarrhea_present_tense(
+#                     nlp_spacy, mention, "Diarrhea_neg"
+#                 )
 
-                # print(present_tense_true_neg)
-            # print(present_tense_true, Tense)
-            # print(mention)
+#                 # print(present_tense_true_neg)
+#             # print(present_tense_true, Tense)
+#             # print(mention)
 
-            if present_tense_true == True or (
-                Label == "Diarrhea" and present_tense_true_neg == True
-            ):
-                # print(Tense)
-                doc = nlp_spacy(mention.lower())
+#             if present_tense_true == True or (
+#                 Label == "Diarrhea" and present_tense_true_neg == True
+#             ):
+#                 # print(Tense)
+#                 doc = nlp_spacy(mention.lower())
 
-                # if Label == 'Diarrhea':
-                # doc = retokenize_ent(diarrhea_bag_of_words, mention, doc, Label)
-                # print(doc.ents, [ent._.negex for ent in doc.ents])
-                # doc = retokenize_ent(diarrhea_negation, mention, doc, 'Diarrhea_neg')
-                # print(doc.ents, [ent.label_ for ent in doc.ents])
+#                 # if Label == 'Diarrhea':
+#                 # doc = retokenize_ent(diarrhea_bag_of_words, mention, doc, Label)
+#                 # print(doc.ents, [ent._.negex for ent in doc.ents])
+#                 # doc = retokenize_ent(diarrhea_negation, mention, doc, 'Diarrhea_neg')
+#                 # print(doc.ents, [ent.label_ for ent in doc.ents])
 
-                # doc = retokenize_ent(bag_of_words_gen, mention, doc, 'Diarrhea')
+#                 # doc = retokenize_ent(bag_of_words_gen, mention, doc, 'Diarrhea')
 
-                # if all(x not in [ent.label_ for ent in doc.ents] for x in ['Diarrhea', 'Diarrhea_neg']):
-                # doc = retokenize_ent(bag_of_words_gen, mention, doc, 'Diarrhea')
+#                 # if all(x not in [ent.label_ for ent in doc.ents] for x in ['Diarrhea', 'Diarrhea_neg']):
+#                 # doc = retokenize_ent(bag_of_words_gen, mention, doc, 'Diarrhea')
 
-                # elif Label == 'range':
-                # doc = tokenize_range(doc, mention, span_text[index], 'range')
+#                 # elif Label == 'range':
+#                 # doc = tokenize_range(doc, mention, span_text[index], 'range')
 
-                # print(doc.ents)
+#                 # print(doc.ents)
 
-                for ent in doc.ents:
+#                 for ent in doc.ents:
 
-                    # print(ent.text, ent.label_)
-                    if ent.label_ == Label or (
-                        Label == "Diarrhea"
-                        and (
-                            ent.label_ == "Diarrhea_neg" or ent.label_ == "Diarrhea_imp"
-                        )
-                    ):
+#                     # print(ent.text, ent.label_)
+#                     if ent.label_ == Label or (
+#                         Label == "Diarrhea"
+#                         and (
+#                             ent.label_ == "Diarrhea_neg" or ent.label_ == "Diarrhea_imp"
+#                         )
+#                     ):
 
-                        if ent.label_ == "Diarrhea":
-                            # print('jer')
-                            x = 1
-                        elif ent.label_ == "Diarrhea_neg":
-                            # print('herr')
-                            x = 0
+#                         if ent.label_ == "Diarrhea":
+#                             # print('jer')
+#                             x = 1
+#                         elif ent.label_ == "Diarrhea_neg":
+#                             # print('herr')
+#                             x = 0
 
-                        if ent._.negex == False:
-                            if Label == "range":
-                                # print('here')
-                                number = encode_stool_freq(ent.text, 3)
-                                temp.append((number, Tense, mention))
-                            elif Label == "Bristol":
-                                number = encode_stool_freq(ent.text, 5)
-                                temp.append((number, Tense, mention))
-                            elif Label == "Diarrhea" and ent.label_ == "Diarrhea_imp":
-                                temp.append((0,))
+#                         if ent._.negex == False:
+#                             if Label == "range":
+#                                 # print('here')
+#                                 number = encode_stool_freq(ent.text, 3)
+#                                 temp.append((number, Tense, mention))
+#                             elif Label == "Bristol":
+#                                 number = encode_stool_freq(ent.text, 5)
+#                                 temp.append((number, Tense, mention))
+#                             elif Label == "Diarrhea" and ent.label_ == "Diarrhea_imp":
+#                                 temp.append((0,))
 
-                            else:
-                                temp.append((x, Tense, mention))
-                        else:
-                            # print('herererererer')
-                            if Label == "range":
-                                number = encode_stool_freq(ent.text, 3)
-                                temp.append((number, Tense, mention))
+#                             else:
+#                                 temp.append((x, Tense, mention))
+#                         else:
+#                             # print('herererererer')
+#                             if Label == "range":
+#                                 number = encode_stool_freq(ent.text, 3)
+#                                 temp.append((number, Tense, mention))
 
-                            elif Label == "Bristol":
-                                number = encode_stool_freq(ent.text, 5)
-                                temp.append((number, Tense, mention))
+#                             elif Label == "Bristol":
+#                                 number = encode_stool_freq(ent.text, 5)
+#                                 temp.append((number, Tense, mention))
 
-                            else:
-                                # print('herrr')
-                                temp.append((binary_negation(x), Tense, mention))
+#                             else:
+#                                 # print('herrr')
+#                                 temp.append((binary_negation(x), Tense, mention))
 
-                negation += temp
+#                 negation += temp
 
-        except:
-            continue
+#         except:
+#             continue
 
-    if len(negation) > 0:
-        return negation
-    else:
-        return np.nan
+#     if len(negation) > 0:
+#         return negation
+#     else:
+#         return np.nan
 
 
-def get_tense_negation(mentions, Label, nlp_spacy, note_id):
+def get_diarrhea_tense_negation(mentions, Label, nlp_spacy, note_id):
 
     # print(note_id)
 
@@ -1753,7 +1758,7 @@ def get_tense_negation(mentions, Label, nlp_spacy, note_id):
             if ent.label_ in Label_1:
                 # print(ent.text, ent.label_)
 
-                present_tense_true, Tense = present_tense(
+                present_tense_true, Tense = diarrhea_present_tense(
                     nlp_spacy, mention, ent.label_, ent.start
                 )
                 # print(present_tense_true, Tense, ent._.negex)
@@ -1844,22 +1849,6 @@ def preprocessing(note):
     return processed_note
 
 
-def remove_duplicates(range_list):
-    total_list = []
-    lst = []
-    for range_ in range_list:
-        start = range_[0]
-        end = range_[1]
-        total_list += list(range(start, end))
-
-    total_list_filtered = list(set(total_list))
-    total_list_filtered = sorted(total_list_filtered)
-
-    lst = modify_ranges(total_list_filtered)
-
-    return lst
-
-
 def takeSecond(elem):
     return elem[1]
 
@@ -1904,16 +1893,6 @@ def get_adj(sentence, nlp_spacy):
         return True, indicator_word_2
     else:
         return False, None
-
-
-def check_sentence(identifiers, sentence):
-    for ident in identifiers:
-        # print(ident)
-        if re.search(ident, sentence, re.IGNORECASE) is not None:
-            return True
-        else:
-            continue
-    return False
 
 
 def check_spans(current_span, spans):
@@ -1990,145 +1969,17 @@ def re_order(dictionary):
     return sorted_list, spans
 
 
-def find_stool_freq(note):
-    bag_of_words_bm = [
-        "(bm[a-zA-Z]*)",
-        "(bowel[ ]{1,}movement[a-zA-Z]*)",
-        "(stool[a-zA-Z]*)",
-        "(bristol)|(bss)",
-        "(move.{,10}bowel[a-z]*)",
-    ]
-
-    bag_of_words_fre = [
-        r"([0-9]+[ ]{0,}\-[ ]{0,}[0-9]+)[^.]{,10}per[ ]{1,}day",
-        r"([0-9]+[ ]{0,}\-[ ]{0,}[0-9]+)",
-        r"([0-9]+[ ]{1,}[0-9]+)",
-        r"~[ ]{0,}([0-9]+)",
-        r"(?<!\d|/|\.|&|%)([0-9]{1,2})(?=[^0-9\/])(?![ ]{0,}(week|day|year|month|hour|%|&))",
-        " (one) ",
-        " (two) ",
-        " (three) ",
-        " (four) ",
-        " (five) ",
-        " (six) ",
-        " (seven) ",
-        " (eight) ",
-        " (nine) ",
-        " (a) ",
-    ]
-
-    negative_identifiers = [
-        " test[a-zA-Z]*",
-        " study",
-        " studie[a-zA-Z]*",
-        " o&p",
-        " gram",
-    ]
-
-    bm_sentence = []
-    bm_spans = []
-    final_matches = []
-    track = []
-
-    note = preprocessing(note)
-
-    for word_bm in bag_of_words_bm:
-
-        regex = "[^.]*" + word_bm + "[^.]*"
-
-        try:
-            trial = re.finditer(regex, note, re.IGNORECASE)
-
-            for match in trial:
-                # print(match)
-                if not check_spans_overlap(match.span(0), track):
-                    if not check_sentence(negative_identifiers, match.group(0)):
-                        bm_sentence.append(match.group(0))
-                        track.append(match.span(0))
-        except:
-            continue
-
-    # print(bm_sentence)
-    for sentence in bm_sentence:
-        # print('sentence',sentence)
-        temp = []
-        temp_spans = []
-
-        for word_bm in bag_of_words_bm:
-
-            try:
-                trial = re.finditer(word_bm, sentence, re.IGNORECASE)
-            # print([match.group(0) for match in trial])
-
-            except:
-                continue
-
-            for match in trial:
-                # print(match)
-                if not check_spans_overlap(match.span(1), temp_spans):
-                    temp.append((match.group(1), match.span(1)))
-                    temp_spans.append((match.span(1)))
-
-        bm_spans.append((sentence, temp))
-
-    # print('bm_spans', bm_spans)
-    if len(bm_spans) > 0:
-
-        for sentence, bm_span in bm_spans:
-
-            sentence_matches = []
-            number_spans = []
-            track_spans = []
-            track_matches = []
-
-            for word_num in bag_of_words_fre:
-                # print(word_num)
-                try:
-                    trial = re.finditer(word_num, sentence, re.IGNORECASE)
-
-                except:
-                    # print('error')
-                    continue
-
-                for match_1 in trial:
-                    # print(match)
-                    if not check_spans_overlap(match_1.span(1), track_spans):
-                        # print(match_1)
-                        match_span = match_1.span(1)
-                        number_spans.append((match_1.group(1), match_span))
-                        track_spans.append(match_1.span(1))
-
-            # print('number_spans', number_spans)
-
-            if len(number_spans) > 0:
-                for span in bm_span:
-                    # print('span', span)
-                    # print(span[0], (span[1][0] + span[1][1])/2 )
-                    matches = get_closest_number(
-                        number_spans, (span[1][0] + span[1][1]) / 2
-                    )
-                    if matches not in track_matches:
-                        final_matches.append((sentence, matches[0][0], matches[0][1]))
-                        track_matches.append(matches)
-
-            else:
-                continue
-
-        return final_matches
-
-    else:
-        return np.nan
 
 
 def find_previous_note(note_id, df):
 
-    row = df[df["deid_note_id"] == note_id]
-    patient_id = row["deid_PatientDurableKey"]
-    date = row["deid_service_date_cdw"].values
+    row = df[df[id_column] == note_id]
+    patient_id = row[patient_durable_key]
+    date = row[service_date].values
 
-    patient_rows = df[df["deid_PatientDurableKey"] == patient_id.values[0]]
-    note_ids = patient_rows["deid_note_id"].values
-    dates = patient_rows["deid_service_date_cdw"].values
+    patient_rows = df[df[patient_durable_key] == patient_id.values[0]]
+    note_ids = patient_rows[id_column].values
+    dates = patient_rows[service_date].values
 
     number_dates = len(dates)
 
@@ -2162,112 +2013,112 @@ def find_previous_note(note_id, df):
     return dates_dic[previous_date]
 
 
-def encode_column(df1, df2, column_to_encode, encoded_column_name, df_same):
+# def encode_column(df1, df2, column_to_encode, encoded_column_name, df_same):
 
-    values_list = df2[df2[column_to_encode].notnull()][column_to_encode]
-    values_index = values_list.index
+#     values_list = df2[df2[column_to_encode].notnull()][column_to_encode]
+#     values_index = values_list.index
 
-    encoded_values = []
+#     encoded_values = []
 
-    for index, values in zip(values_index, values_list):
-        # print(values)
-        Tenses = [value[1] for value in values]
-        # print(Tenses)
-        # negations = [value[1] for value in values]
-        # print(Blood_Values, Blood_Values[0])
+#     for index, values in zip(values_index, values_list):
+#         # print(values)
+#         Tenses = [value[1] for value in values]
+#         # print(Tenses)
+#         # negations = [value[1] for value in values]
+#         # print(Blood_Values, Blood_Values[0])
 
-        values = [value[0] for value in values]
-        # print(values)
+#         values = [value[0] for value in values]
+#         # print(values)
 
-        if "CURRENT" in Tenses:
-            True_index = [
-                index for index, tense in enumerate(Tenses) if tense == "CURRENT"
-            ]
-            True_Values = [
-                value for index, value in enumerate(values) if index in True_index
-            ]
-            # True_negation = [neg for index, negation in enumerate(negations) if index in True_index]
+#         if "CURRENT" in Tenses:
+#             True_index = [
+#                 index for index, tense in enumerate(Tenses) if tense == "CURRENT"
+#             ]
+#             True_Values = [
+#                 value for index, value in enumerate(values) if index in True_index
+#             ]
+#             # True_negation = [neg for index, negation in enumerate(negations) if index in True_index]
 
-            if len(True_index) == 1:
-                encoded_values.append(True_Values[0])
+#             if len(True_index) == 1:
+#                 encoded_values.append(True_Values[0])
 
-            else:
-                if len(set(True_Values)) == 1:
-                    encoded_values.append(list(set(True_Values))[0])
+#             else:
+#                 if len(set(True_Values)) == 1:
+#                     encoded_values.append(list(set(True_Values))[0])
 
-                else:
-                    encoded_values.append(int(1))
+#                 else:
+#                     encoded_values.append(int(1))
 
-        elif "NO_VERB" in Tenses or "SIMPLE_PRESENT" in Tenses:
-            True_index = [
-                index
-                for index, tense in enumerate(Tenses)
-                if tense == "NO_VERB" or tense == "SIMPLE_PRESENT"
-            ]
+#         elif "NO_VERB" in Tenses or "SIMPLE_PRESENT" in Tenses:
+#             True_index = [
+#                 index
+#                 for index, tense in enumerate(Tenses)
+#                 if tense == "NO_VERB" or tense == "SIMPLE_PRESENT"
+#             ]
 
-            True_Values = [
-                value for index, value in enumerate(values) if index in True_index
-            ]
-            # True_negation = [neg for index, negation in enumerate(negations) if index in True_index]
+#             True_Values = [
+#                 value for index, value in enumerate(values) if index in True_index
+#             ]
+#             # True_negation = [neg for index, negation in enumerate(negations) if index in True_index]
 
-            if len(True_index) == 1:
-                encoded_values.append(True_Values[0])
+#             if len(True_index) == 1:
+#                 encoded_values.append(True_Values[0])
 
-            else:
-                if len(set(True_Values)) == 1:
-                    encoded_values.append(list(set(True_Values))[0])
+#             else:
+#                 if len(set(True_Values)) == 1:
+#                     encoded_values.append(list(set(True_Values))[0])
 
-                else:
-                    encoded_values.append(int(1))
+#                 else:
+#                     encoded_values.append(int(1))
 
-        elif "PRESENT_PART" in Tenses:
-            True_index = [
-                index for index, tense in enumerate(Tenses) if tense == "PRESENT_PART"
-            ]
-            True_Values = [
-                value for index, value in enumerate(values) if index in True_index
-            ]
-            # True_negation = [neg for index, negation in enumerate(negations) if index in True_index]
+#         elif "PRESENT_PART" in Tenses:
+#             True_index = [
+#                 index for index, tense in enumerate(Tenses) if tense == "PRESENT_PART"
+#             ]
+#             True_Values = [
+#                 value for index, value in enumerate(values) if index in True_index
+#             ]
+#             # True_negation = [neg for index, negation in enumerate(negations) if index in True_index]
 
-            if len(True_index) == 1:
-                encoded_values.append(True_Values[0])
+#             if len(True_index) == 1:
+#                 encoded_values.append(True_Values[0])
 
-            else:
-                if len(set(True_Values)) == 1:
-                    encoded_values.append(list(set(True_Values))[0])
+#             else:
+#                 if len(set(True_Values)) == 1:
+#                     encoded_values.append(list(set(True_Values))[0])
 
-                else:
-                    encoded_values.append(int(1))
+#                 else:
+#                     encoded_values.append(int(1))
 
-        elif "PRES_PERF_CON" in Tenses:
+#         elif "PRES_PERF_CON" in Tenses:
 
-            True_index = [
-                index for index, tense in enumerate(Tenses) if tense == "PRES_PERF_CON"
-            ]
-            True_Values = [
-                value for index, value in enumerate(values) if index in True_index
-            ]
-            # True_negation = [neg for index, negation in enumerate(negations) if index in True_index]
+#             True_index = [
+#                 index for index, tense in enumerate(Tenses) if tense == "PRES_PERF_CON"
+#             ]
+#             True_Values = [
+#                 value for index, value in enumerate(values) if index in True_index
+#             ]
+#             # True_negation = [neg for index, negation in enumerate(negations) if index in True_index]
 
-            if len(True_index) == 1:
-                encoded_values.append(True_Values[0])
+#             if len(True_index) == 1:
+#                 encoded_values.append(True_Values[0])
 
-            else:
-                if len(set(True_Values)) == 1:
-                    encoded_values.append(list(set(True_Values))[0])
+#             else:
+#                 if len(set(True_Values)) == 1:
+#                     encoded_values.append(list(set(True_Values))[0])
 
-                else:
-                    encoded_values.append(int(1))
+#                 else:
+#                     encoded_values.append(int(1))
 
-    if df_same == False:
-        id_list = []
-        for index in values_index:
-            id_list.append(df2["deid_note_id"][index])
+#     if df_same == False:
+#         id_list = []
+#         for index in values_index:
+#             id_list.append(df2[id_column][index])
 
-        values_index = get_index(id_list, df1)
+#         values_index = get_index_from_list(id_list, df1)
 
-    for index, value in zip(values_index, encoded_values):
-        df1.at[index, encoded_column_name] = value
+#     for index, value in zip(values_index, encoded_values):
+#         df1.at[index, encoded_column_name] = value
 
 
 def encode_stool_freq(stool_number, threshold):
@@ -2316,16 +2167,16 @@ def encode_diarrhea(df1, df2, column_to_encode, encoded_column_name, df_same):
         keywords = [value[0] for value in values]
 
 
-def get_range(HPI_offset, HPI):
-    lst = []
-    lst.append((int(HPI_offset), int(HPI_offset + len(HPI))))
-    return lst
+# def get_range(HPI_offset, HPI):
+#     lst = []
+#     lst.append((int(HPI_offset), int(HPI_offset + len(HPI))))
+#     return lst
 
 
-def get_index(lst, df):
+def get_index_from_list(lst, df):
     lst_ = []
     for l in lst:
-        lst_.append(df[df["deid_note_id"] == l].index.values[0])
+        lst_.append(df[df[id_column] == l].index.values[0])
 
     return lst_
 
