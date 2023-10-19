@@ -852,7 +852,7 @@ encode_column(
     "Well_Present",
     "well_mention_Interval_History",
     True,
-# )
+)
 # encode_column(
 #     IBD_Fecal_Blood, Previous_note, "Well_Present", "well_mention_Previous_note", False
 # )
