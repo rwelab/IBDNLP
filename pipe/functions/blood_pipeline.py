@@ -21,8 +21,8 @@ from spacy.tokens import Span
 from spacy.util import filter_spans
 # from tqdm import tqdm
 
-sys.path.append('../../pipe/')
-from pipe.user_definition import *
+sys.path.append('../user_definition.py')
+from user_definition import *
 
 row_names_pain = [
     "Pain_ROS",

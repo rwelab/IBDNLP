@@ -24,8 +24,8 @@ from spacy.util import filter_spans
 from tqdm import tqdm
 from word2number import w2n
 
-sys.path.append('../../pipe/')
-from pipe.user_definition import *
+sys.path.append('../user_definition.py')
+from user_definition import *
 
 row_names_dia = [
     "Dia_ROS",

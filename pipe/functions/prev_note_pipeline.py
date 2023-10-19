@@ -11,8 +11,8 @@ from more_itertools import consecutive_groups
 # from scipy.stats import beta
 # from tqdm import tqdm
 
-sys.path.append('../../pipe/')
-from pipe.user_definition import *
+sys.path.append('../user_definition.py')
+from user_definition import *
 
 def get_note(_id, df):
     row = df[df[id_column] == _id]

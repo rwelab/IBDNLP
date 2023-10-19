@@ -10,8 +10,8 @@ import pandas as pd
 # import scispacy
 # import spacy
 
-sys.path.append('../../pipe/')
-from pipe.user_definition import *
+sys.path.append('../user_definition.py')
+from user_definition import *
 
 # an exploratory function that searches for a an HPI/ROS questionnaire
 
