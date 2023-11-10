@@ -194,7 +194,7 @@ def removekey(d, key):
 
 
 def get_index(note_id, df):
-    return df[df[note_column] == note_id].index.values[0]
+    return df[df[id_column] == note_id].index.values[0]
 
 
 # ### Exploring Previous Note Comparison for Extraction ###
