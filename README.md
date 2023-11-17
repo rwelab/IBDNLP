@@ -52,13 +52,9 @@ python install_spacy_models.py
 
 Once your environment has been set up, and all files have been downloaded, please reference the ```user_definition.py``` file and change the column names to suit your use case. For reference, the following columns were used to develop and train our models:
  - "note": the text of the note itself
- - "deid_note_id":
- - "deid_note_key":
- - "deid_PatientDurableKey":
+ - "deid_note_id": id for each note
+ - "deid_PatientDurableKey": key used to identify patients
  - "deid_service_date_cdw": service date for the patient's visit/medical appointment
- - "Age": age of the patient
- - "crohns":
- - "ulc_colitis":
 
 This is also where you can specify the location of your ```data``` folder.
 
