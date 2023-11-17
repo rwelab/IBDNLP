@@ -341,19 +341,19 @@ IBD_Fecal_Blood["Pain_Present"] = IBD_Fecal_Blood.progress_apply(
     axis=1,
 )
 
-IBD_Fecal_Blood["CR_Present"] = IBD_Fecal_Blood.progress_apply(
-    lambda x: get_abdominal_tense_negation(
-        x["cr_mentions"], "Clin_Rem", nlp_abdominal, x[id_column]
-    ),
-    axis=1,
-)
+# IBD_Fecal_Blood["CR_Present"] = IBD_Fecal_Blood.progress_apply(
+#     lambda x: get_abdominal_tense_negation(
+#         x["cr_mentions"], "Clin_Rem", nlp_abdominal, x[id_column]
+#     ),
+#     axis=1,
+# )
 
-IBD_Fecal_Blood["Well_Present"] = IBD_Fecal_Blood.progress_apply(
-    lambda x: get_abdominal_tense_negation(
-        x["well_mentions"], "WELL", nlp_abdominal, x[id_column]
-    ),
-    axis=1,
-)
+# IBD_Fecal_Blood["Well_Present"] = IBD_Fecal_Blood.progress_apply(
+#     lambda x: get_abdominal_tense_negation(
+#         x["well_mentions"], "WELL", nlp_abdominal, x[id_column]
+#     ),
+#     axis=1,
+# )
 
 # ### Apply Blood Mention Extraction to Previous_Note Extraction ###
 
@@ -419,19 +419,19 @@ Previous_note["Pain_Present"] = Previous_note.progress_apply(
     axis=1,
 )
 
-Previous_note["CR_Present"] = Previous_note.progress_apply(
-    lambda x: get_abdominal_tense_negation(
-        x["cr_mentions"], "Clin_Rem", nlp_abdominal, x[id_column]
-    ),
-    axis=1,
-)
+# Previous_note["CR_Present"] = Previous_note.progress_apply(
+#     lambda x: get_abdominal_tense_negation(
+#         x["cr_mentions"], "Clin_Rem", nlp_abdominal, x[id_column]
+#     ),
+#     axis=1,
+# )
 
-Previous_note["Well_Present"] = Previous_note.progress_apply(
-    lambda x: get_abdominal_tense_negation(
-        x["well_mentions"], "WELL", nlp_abdominal, x[id_column]
-    ),
-    axis=1,
-)
+# Previous_note["Well_Present"] = Previous_note.progress_apply(
+#     lambda x: get_abdominal_tense_negation(
+#         x["well_mentions"], "WELL", nlp_abdominal, x[id_column]
+#     ),
+#     axis=1,
+# )
 
 IBD_Fecal_Blood["Fecal_Blood_Value"] = IBD_Fecal_Blood["Fecal_Blood_Value"].progress_apply(
     lambda x: encode(x)
@@ -464,12 +464,12 @@ encode_column(
 encode_column(
     IBD_Fecal_Blood, Previous_note, "Pain_Present", "pain_mention_Previous_note", False
 )
-encode_column(
-    IBD_Fecal_Blood, Previous_note, "CR_Present", "cr_mention_Previous_note", False
-)
-encode_column(
-    IBD_Fecal_Blood, Previous_note, "Well_Present", "well_mention_Previous_note", False
-)
+# encode_column(
+#     IBD_Fecal_Blood, Previous_note, "CR_Present", "cr_mention_Previous_note", False
+# )
+# encode_column(
+#     IBD_Fecal_Blood, Previous_note, "Well_Present", "well_mention_Previous_note", False
+# )
 encode_column(
     IBD_Fecal_Blood,
     IBD_Fecal_Blood,
@@ -484,16 +484,16 @@ encode_column(
     "pain_mention_Interval_History",
     True,
 )
-encode_column(
-    IBD_Fecal_Blood, IBD_Fecal_Blood, "CR_Present", "cr_mention_Interval_History", True
-)
-encode_column(
-    IBD_Fecal_Blood,
-    IBD_Fecal_Blood,
-    "Well_Present",
-    "well_mention_Interval_History",
-    True,
-)
+# encode_column(
+#     IBD_Fecal_Blood, IBD_Fecal_Blood, "CR_Present", "cr_mention_Interval_History", True
+# )
+# encode_column(
+#     IBD_Fecal_Blood,
+#     IBD_Fecal_Blood,
+#     "Well_Present",
+#     "well_mention_Interval_History",
+#     True,
+# )
 
 # #### Blood Mention Extraction Remaining Notes #####
 
@@ -588,19 +588,19 @@ IBD_Fecal_Blood["Pain_Present_HPI"] = IBD_Fecal_Blood.progress_apply(
     axis=1,
 )
 
-IBD_Fecal_Blood["CR_Present_HPI"] = IBD_Fecal_Blood.progress_apply(
-    lambda x: get_abdominal_tense_negation(
-        x["cr_mentions_HPI"], "Clin_Rem", nlp_abdominal, x[id_column]
-    ),
-    axis=1,
-)
+# IBD_Fecal_Blood["CR_Present_HPI"] = IBD_Fecal_Blood.progress_apply(
+#     lambda x: get_abdominal_tense_negation(
+#         x["cr_mentions_HPI"], "Clin_Rem", nlp_abdominal, x[id_column]
+#     ),
+#     axis=1,
+# )
 
-IBD_Fecal_Blood["Well_Present_HPI"] = IBD_Fecal_Blood.progress_apply(
-    lambda x: get_abdominal_tense_negation(
-        x["well_mentions_HPI"], "WELL", nlp_abdominal, x[id_column]
-    ),
-    axis=1,
-)
+# IBD_Fecal_Blood["Well_Present_HPI"] = IBD_Fecal_Blood.progress_apply(
+#     lambda x: get_abdominal_tense_negation(
+#         x["well_mentions_HPI"], "WELL", nlp_abdominal, x[id_column]
+#     ),
+#     axis=1,
+# )
 
 # #### Encode Results ####
 # IBD_Fecal_Blood["pain_mention_remaining_notes"] = np.nan
@@ -625,12 +625,12 @@ encode_column(
 encode_column(
     IBD_Fecal_Blood, IBD_Fecal_Blood, "Pain_Present_HPI", "pain_mention_HPI", True
 )
-encode_column(
-    IBD_Fecal_Blood, IBD_Fecal_Blood, "CR_Present_HPI", "cr_mention_HPI", True
-)
-encode_column(
-    IBD_Fecal_Blood, IBD_Fecal_Blood, "Well_Present_HPI", "well_mention_HPI", True
-)
+# encode_column(
+#     IBD_Fecal_Blood, IBD_Fecal_Blood, "CR_Present_HPI", "cr_mention_HPI", True
+# )
+# encode_column(
+#     IBD_Fecal_Blood, IBD_Fecal_Blood, "Well_Present_HPI", "well_mention_HPI", True
+# )
 
 # ### Consolidate Each Blood Mention into a single Column ###
 IBD_Fecal_Blood["Fecal_Blood_Value_Master"] = np.nan
@@ -700,19 +700,19 @@ IBD_Fecal_Blood["Bristol_Present"] = IBD_Fecal_Blood.progress_apply(
     axis=1,
 )
 
-# IBD_Fecal_Blood["CR_Present"] = IBD_Fecal_Blood.progress_apply(
-#     lambda x: get_diarrhea_tense_negation(
-#         x["cr_mentions"], "Clin_Rem", nlp_diarrhea, x[id_column]
-#     ),
-#     axis=1,
-# )
+IBD_Fecal_Blood["CR_Present"] = IBD_Fecal_Blood.progress_apply(
+    lambda x: get_diarrhea_tense_negation(
+        x["cr_mentions"], "Clin_Rem", nlp_diarrhea, x[id_column]
+    ),
+    axis=1,
+)
 
-# IBD_Fecal_Blood["Well_Present"] = IBD_Fecal_Blood.progress_apply(
-#     lambda x: get_diarrhea_tense_negation(
-#         x["well_mentions"], "WELL", nlp_diarrhea, x[id_column]
-#     ),
-#     axis=1,
-# )
+IBD_Fecal_Blood["Well_Present"] = IBD_Fecal_Blood.progress_apply(
+    lambda x: get_diarrhea_tense_negation(
+        x["well_mentions"], "WELL", nlp_diarrhea, x[id_column]
+    ),
+    axis=1,
+)
 
 Previous_note["HPI"] = Previous_note[id_column].map(
     IBD_Fecal_Blood.set_index(id_column)["HPI"]
@@ -776,19 +776,19 @@ Previous_note["Bristol_Present"] = Previous_note.progress_apply(
     axis=1,
 )
 
-# Previous_note["CR_Present"] = Previous_note.progress_apply(
-#     lambda x: get_diarrhea_tense_negation(
-#         x["cr_mentions"], "Clin_Rem", nlp_diarrhea, x[id_column]
-#     ),
-#     axis=1,
-# )
+Previous_note["CR_Present"] = Previous_note.progress_apply(
+    lambda x: get_diarrhea_tense_negation(
+        x["cr_mentions"], "Clin_Rem", nlp_diarrhea, x[id_column]
+    ),
+    axis=1,
+)
 
-# Previous_note["Well_Present"] = Previous_note.progress_apply(
-#     lambda x: get_diarrhea_tense_negation(
-#         x["well_mentions"], "WELL", nlp_diarrhea, x[id_column]
-#     ),
-#     axis=1,
-# )
+Previous_note["Well_Present"] = Previous_note.progress_apply(
+    lambda x: get_diarrhea_tense_negation(
+        x["well_mentions"], "WELL", nlp_diarrhea, x[id_column]
+    ),
+    axis=1,
+)
 
 IBD_Fecal_Blood["dia_mention_Previous_note"] = np.nan
 IBD_Fecal_Blood["dia_mention_Interval_History"] = np.nan
@@ -847,22 +847,22 @@ encode_column(
     "bristol_mention_Previous_note",
     False,
 )
-# encode_column(
-#     IBD_Fecal_Blood,
-#     IBD_Fecal_Blood,
-#     "Well_Present",
-#     "well_mention_Interval_History",
-#     True,
-# )
-# encode_column(
-#     IBD_Fecal_Blood, Previous_note, "Well_Present", "well_mention_Previous_note", False
-# )
-# encode_column(
-#     IBD_Fecal_Blood, IBD_Fecal_Blood, "CR_Present", "CR_mention_Interval_History", True
-# )
-# encode_column(
-#     IBD_Fecal_Blood, Previous_note, "CR_Present", "CR_mention_Previous_note", False
-# )
+encode_column(
+    IBD_Fecal_Blood,
+    IBD_Fecal_Blood,
+    "Well_Present",
+    "well_mention_Interval_History",
+    True,
+)
+encode_column(
+    IBD_Fecal_Blood, Previous_note, "Well_Present", "well_mention_Previous_note", False
+)
+encode_column(
+    IBD_Fecal_Blood, IBD_Fecal_Blood, "CR_Present", "CR_mention_Interval_History", True
+)
+encode_column(
+    IBD_Fecal_Blood, Previous_note, "CR_Present", "CR_mention_Previous_note", False
+)
 
 IBD_Fecal_Blood["Previous_note_id"] = IBD_Fecal_Blood.progress_apply(
     lambda x: find_previous_note(x[id_column], IBD_Fecal_Blood), axis=1
@@ -936,19 +936,19 @@ IBD_Fecal_Blood["Bristol_Present"] = IBD_Fecal_Blood.progress_apply(
     axis=1,
 )
 
-# IBD_Fecal_Blood["CR_Present"] = IBD_Fecal_Blood.progress_apply(
-#     lambda x: get_diarrhea_tense_negation(
-#         x["cr_mentions_HPI"], "Clin_Rem", nlp_diarrhea, x[id_column]
-#     ),
-#     axis=1,
-# )
+IBD_Fecal_Blood["CR_Present_HPI"] = IBD_Fecal_Blood.progress_apply(
+    lambda x: get_diarrhea_tense_negation(
+        x["cr_mentions_HPI"], "Clin_Rem", nlp_diarrhea, x[id_column]
+    ),
+    axis=1,
+)
 
-# IBD_Fecal_Blood["Well_Present"] = IBD_Fecal_Blood.progress_apply(
-#     lambda x: get_diarrhea_tense_negation(
-#         x["well_mentions_HPI"], "WELL", nlp_diarrhea, x[id_column]
-#     ),
-#     axis=1,
-# )
+IBD_Fecal_Blood["Well_Present_HPI"] = IBD_Fecal_Blood.progress_apply(
+    lambda x: get_diarrhea_tense_negation(
+        x["well_mentions_HPI"], "WELL", nlp_diarrhea, x[id_column]
+    ),
+    axis=1,
+)
 
 IBD_Fecal_Blood["dia_mention_remaining_notes"] = np.nan
 IBD_Fecal_Blood["stool_fre_mention_remaining_notes"] = np.nan
@@ -987,6 +987,12 @@ encode_column(
 )
 encode_column(
     IBD_Fecal_Blood, IBD_Fecal_Blood, "CR_Present", "CR_mention_remaining_notes", True
+)
+encode_column(
+    IBD_Fecal_Blood, IBD_Fecal_Blood, "CR_Present_HPI", "cr_mention_HPI", True
+)
+encode_column(
+    IBD_Fecal_Blood, IBD_Fecal_Blood, "Well_Present_HPI", "well_mention_HPI", True
 )
 
 IBD_Fecal_Blood["Dia_ROS"] = np.nan
