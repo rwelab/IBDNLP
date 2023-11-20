@@ -1015,6 +1015,9 @@ consolidate_columns(row_names_bristol, "Bristol_Master", IBD_Fecal_Blood)
 # consolidate_columns(row_names_well, "Well_Master", IBD_Fecal_Blood)
 # consolidate_columns(row_names_cr, "CR_Master", IBD_Fecal_Blood)
 
+## Re-Encode Fecal Blood Value Master
+IBD_Fecal_Blood = incorporate_other_symptoms(IBD_Fecal_Blood)
+
 # IBD_Fecal_Blood.to_json("data/diarrhea_results.json")
 IBD_Fecal_Blood.to_json(os.path.join(data_folder, "extracted_data.json"))
 
