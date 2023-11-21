@@ -752,7 +752,7 @@ def Multi_Word_Abdominal_NER(doc):
 
         if len(mwt_ents) != 0:
             if Label == "PAIN_gen":
-                Label == "PAIN"
+                Label = "PAIN"
             for ent in mwt_ents:
                 start, end, name = ent
                 if end - start != 0:
@@ -1375,147 +1375,7 @@ def encode_values(list_of_indices, value, df, column_name):
         df.at[index, column_name] = value
 
 
-# def encode_column(df1, df2, column_to_encode, encoded_column_name, df_same):
 
-#     values_list = df2[df2[column_to_encode].notnull()][column_to_encode]
-#     values_index = values_list.index
-
-#     encoded_values = []
-
-#     for index, values in zip(values_index, values_list):
-#         # print(values)
-#         Tenses = [value[2] for value in values]
-#         # print(Tenses)
-#         Blood_Values = [value[1] for value in values]
-#         # print(Blood_Values, Blood_Values[0])
-
-#         keywords = [value[0] for value in values]
-
-#         if "CURRENT" in Tenses:
-#             True_index = [
-#                 index for index, tense in enumerate(Tenses) if tense == "CURRENT"
-#             ]
-#             True_Blood_Values = [
-#                 value for index, value in enumerate(Blood_Values) if index in True_index
-#             ]
-
-#             if len(True_index) == 1:
-#                 if True_Blood_Values[0] == True:
-#                     encoded_values.append(int(1))
-#                 else:
-#                     encoded_values.append(int(0))
-#             else:
-#                 if len(set(True_Blood_Values)) == 1:
-#                     if list(set(True_Blood_Values))[0] == True:
-#                         encoded_values.append(int(1))
-#                     else:
-#                         encoded_values.append(int(0))
-#                 else:
-#                     encoded_values.append(int(1))
-
-#         elif "NO_VERB" in Tenses:
-#             True_index = [
-#                 index for index, tense in enumerate(Tenses) if tense == "NO_VERB"
-#             ]
-#             True_Blood_Values = [
-#                 value for index, value in enumerate(Blood_Values) if index in True_index
-#             ]
-#             # print(True_Blood_Values[0])
-#             if len(True_index) == 1:
-#                 # print('True_index', True_index)
-#                 if True_Blood_Values[0] == True:
-#                     encoded_values.append(int(1))
-#                 else:
-#                     encoded_values.append(int(0))
-#             else:
-#                 if len(set(True_Blood_Values)) == 1:
-#                     if list(set(True_Blood_Values))[0] == True:
-#                         encoded_values.append(int(1))
-#                     else:
-#                         encoded_values.append(int(0))
-#                 else:
-#                     encoded_values.append(int(1))
-
-#         elif "SIMPLE_PRESENT" in Tenses:
-#             True_index = [
-#                 index for index, tense in enumerate(Tenses) if tense == "SIMPLE_PRESENT"
-#             ]
-#             True_Blood_Values = [
-#                 value for index, value in enumerate(Blood_Values) if index in True_index
-#             ]
-
-#             if len(True_index) == 1:
-#                 if True_Blood_Values[0] == True:
-#                     encoded_values.append(int(1))
-#                 else:
-#                     encoded_values.append(int(0))
-#             else:
-#                 if len(set(True_Blood_Values)) == 1:
-#                     if list(set(True_Blood_Values))[0] == True:
-#                         encoded_values.append(int(1))
-
-#                     else:
-#                         encoded_values.append(int(0))
-#                 else:
-#                     encoded_values.append(int(1))
-
-#         elif "PRESENT_PART" in Tenses:
-#             True_index = [
-#                 index for index, tense in enumerate(Tenses) if tense == "PRESENT_PART"
-#             ]
-#             True_Blood_Values = [
-#                 value for index, value in enumerate(Blood_Values) if index in True_index
-#             ]
-#             # print(True_Blood_Values)
-#             if len(True_index) == 1:
-#                 if True_Blood_Values[0] == True:
-#                     encoded_values.append(int(1))
-#                 else:
-#                     encoded_values.append(int(0))
-#             else:
-#                 if len(set(True_Blood_Values)) == 1:
-#                     if list(set(True_Blood_Values))[0] == True:
-#                         encoded_values.append(int(1))
-#                     else:
-#                         encoded_values.append(int(0))
-#                 else:
-#                     encoded_values.append(int(1))
-
-#         elif "PRES_PERF_CON" in Tenses:
-
-#             True_index = [
-#                 index for index, tense in enumerate(Tenses) if tense == "PRES_PERF_CON"
-#             ]
-#             True_Blood_Values = [
-#                 value for index, value in enumerate(Blood_Values) if index in True_index
-#             ]
-#             # print(True_Blood_Values[0])
-
-#             if len(True_index) == 1:
-#                 if True_Blood_Values[0] == True:
-#                     # print(True_Blood_Values[0])
-#                     encoded_values.append(int(1))
-#                 else:
-#                     encoded_values.append(int(0))
-#             else:
-#                 if len(set(True_Blood_Values)) == 1:
-#                     if list(set(True_Blood_Values))[0] == True:
-#                         encoded_values.append(int(1))
-
-#                     else:
-#                         encoded_values.append(int(0))
-#                 else:
-#                     encoded_values.append(int(1))
-
-#     if df_same == False:
-#         id_list = []
-#         for index in values_index:
-#             id_list.append(df2["deid_note_id"][index])
-
-#         values_index = get_index(id_list, df1)
-
-#     for index, value in zip(values_index, encoded_values):
-#         df1.at[index, encoded_column_name] = value
 
 
 def encode_column(df1, df2, column_to_encode, encoded_column_name, df_same):
@@ -1625,6 +1485,55 @@ def encode_column(df1, df2, column_to_encode, encoded_column_name, df_same):
     for index, value in zip(values_index, encoded_values):
         df1.at[index, encoded_column_name] = value
 
+# def encode_column(df1, df2, column_to_encode, encoded_column_name, df_same):
+
+#     values_list = df2[df2[column_to_encode].notnull()][column_to_encode]
+#     values_index = values_list.index
+
+#     encoded_values = []
+
+#     for index, values in zip(values_index, values_list):
+
+#         Tenses = [value[1] for value in values]
+#         values = [value[0] for value in values]
+
+#         if "NO_VERB" in Tenses or "SIMPLE_PRESENT" in Tenses or "CURRENT" in Tenses:
+#             True_index = [
+#                 index
+#                 for index, tense in enumerate(Tenses)
+#                 if tense == "NO_VERB" or tense == "SIMPLE_PRESENT" or tense == "CURRENT"
+#             ]
+
+#             True_Values = [
+#                 value for index, value in enumerate(values) if index in True_index
+#             ]
+
+#             if len(True_index) == 1:
+#                 encoded_values.append(True_Values[0])
+
+#             else:
+#                 if len(set(True_Values)) == 1:
+#                     encoded_values.append(list(set(True_Values))[0])
+
+#                 else:
+#                     encoded_values.append(int(1))
+
+#         else:
+#             encoded_values.append(np.nan)
+
+#     if df_same == False:
+#         id_list = []
+#         for index in values_index:
+#             id_list.append(df2[id_column][index])
+
+#         values_index = get_index_from_list(id_list, df1)
+#         ##print(values_index)
+
+#     for index, value in zip(values_index, encoded_values):
+#         if not np.isnan(df1.at[index, encoded_column_name]):
+#             print("error")
+#         df1.at[index, encoded_column_name] = value
+
 
 def check_values(lst):
     for value in lst:
@@ -1635,7 +1544,7 @@ def check_values(lst):
 
 def incorporate_other_symptoms(df):
     # Identify rows where 'Fecal_Blood_Value_Master' is NaN and any of the specified columns are not NaN
-    condition = (df['Fecal_Blood_Value_Master'].isna()) & (
+    condition = (df['Fecal_Blood_Label'].isna()) & (
         ~df['Pain_Value_Master'].isna() | ~df['Dia_Master'].isna() | ~df['Stool_fre_Master'].isna()
     )
 
@@ -1644,32 +1553,18 @@ def incorporate_other_symptoms(df):
 
     return df
 
-# def encode_column2(df1, df2, column_to_encode, encoded_column_name, df_same):
-
-#     values = df2[df2[column_to_encode].notnull()][column_to_encode]
-#     values_index = values.index
-
-#     encoded_values = []
-
-#     for index, values in zip(values_index, values):
-#         if check_values(values) == True:
-#             encoded_values.append(int(1))
-
-#         elif check_values(values) == False:
-#             encoded_values.append(int(0))
-#         else:
-#             raise ValueError("values take more than 2 types.")
-
-#     if df_same == False:
-#         id_list = []
-#         for index in values_index:
-#             id_list.append(df2["deid_note_id"][index])
-
-#         values_index = get_index(id_list, df1)
-
-#     for index, value in zip(values_index, encoded_values):
-#         df1.at[index, encoded_column_name] = value
-
+def final_classification_blood(df):
+    final_clfs = []
+    for index, row in df.iterrows():
+        if np.isnan(row['Fecal_Blood_Value_Master']):
+            if row['CR_Master'] == 1 or row['Well_Master'] == 1:
+                final_clfs.append(0)
+            else:
+                final_clfs.append(np.nan)
+        else:
+            final_clfs.append(row['Fecal_Blood_Value_Master'])
+    
+    return final_clfs
 
 def encode_column_ctakes(df, encoded_column_name):
 
