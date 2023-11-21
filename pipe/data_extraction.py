@@ -1026,7 +1026,7 @@ IBD_Fecal_Blood.to_json(os.path.join(data_folder, "extracted_data.json"))
 X_abd_pain = np.array(IBD_Fecal_Blood[abd_features_1].applymap(map2int).fillna(0))
 X_abd_amb = np.array(IBD_Fecal_Blood[abd_features_2].applymap(map2int).fillna(0))
 
-X_diarrhea = no.array(IBD_Fecal_Blood[diarrhea_features_1].applymap(map2int).fillna(0))
+X_diarrhea = np.array(IBD_Fecal_Blood[diarrhea_features_1].applymap(map2int).fillna(0))
 X_dia_amb = np.array(IBD_Fecal_Blood[diarrhea_features_2].applymap(map2int).fillna(0))
 
 ## Downloading Pre-Trained Models
