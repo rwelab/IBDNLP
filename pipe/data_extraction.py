@@ -1016,6 +1016,8 @@ consolidate_columns(row_names_bristol, "Bristol_Master", IBD_Fecal_Blood)
 # consolidate_columns(row_names_cr, "CR_Master", IBD_Fecal_Blood)
 
 ## Re-Encode Fecal Blood Value Master
+final_clfs = final_classification_blood(IBD_Fecal_Blood)
+IBD_Fecal_Blood['Fecal_Blood_Label'] = final_clfs
 IBD_Fecal_Blood = incorporate_other_symptoms(IBD_Fecal_Blood)
 
 # IBD_Fecal_Blood.to_json("data/diarrhea_results.json")
@@ -1031,12 +1033,20 @@ X_dia_amb = np.array(IBD_Fecal_Blood[diarrhea_features_2].applymap(map2int).fill
 
 ## Downloading Pre-Trained Models
 
-abd_model_1 = pickle.load(open('../models/abdominal_pain_model.pkl', 'rb'))
-abd_model_2 = pickle.load(open('../models/abdominal_ambiguity_model.pkl', 'rb'))
+with open('../models/abdominal_pain_model.pkl', 'rb') as file:
+    abd_model_1 = pickle.load(file)
+    
+with open('../models/abdominal_ambiguity_model.pkl', 'rb') as file:
+    abd_model_2 = pickle.load(file)
+    
+with open('../models/diarrhea_model.pkl', 'rb') as file:
+    dia_model_1 = pickle.load(file)
 
-dia_model_1 = pickle.load(open('../models/diarrhea_model.pkl', 'rb'))
-dia_model_2 = pickle.load(open('../models/diarrhea_ambiguity_model.pkl', 'rb'))
-dia_scaler_1 = pickle.load(open('../models/diarrhea_scaler.pkl', 'rb'))
+with open('../models/diarrhea_scaler.pkl', 'rb') as file:
+    dia_scaler_1 = pickle.load(file)
+
+with open('../models/diarrhea_ambiguity_model.pkl', 'rb') as file:
+    dia_model_2 = pickle.load(file)
 
 ## Creating Labels
 
@@ -1057,12 +1067,12 @@ IBD_Fecal_Blood['Abdominal_Ambiguity_Label'] = y2_pred
 IBD_Fecal_Blood['Diarrhea_Label'] = y3_pred
 IBD_Fecal_Blood['Diarrhea_Ambiguity_Label'] = y4_pred
 
-label_df = master_df[['deid_note_id', 'deid_PatientDurableKey',
+label_df = IBD_Fecal_Blood[['deid_note_id', 'deid_PatientDurableKey',
            'note',
-           'Fecal_Blood_Value_Master',
+           'Fecal_Blood_Label',
            'Abdominal_Pain_Label',
            'Abdominal_Ambiguity_Label',
            'Diarrhea_Label',
            'Diarrhea_Ambiguity_Label']].copy()
 
-label_df.to_json(os.path.join(data_folder, "labeled_data.json"))
+label_df.to_csv(os.path.join(data_folder, "labeled_data.csv"))
