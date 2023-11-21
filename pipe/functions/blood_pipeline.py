@@ -1633,6 +1633,16 @@ def check_values(lst):
 
     return False
 
+def incorporate_other_symptoms(df):
+    # Identify rows where 'Fecal_Blood_Value_Master' is NaN and any of the specified columns are not NaN
+    condition = (df['Fecal_Blood_Value_Master'].isna()) & (
+        ~df['Pain_Value_Master'].isna() | ~df['Dia_Master'].isna() | ~df['Stool_fre_Master'].isna()
+    )
+
+    # Set 'Fecal_Blood_Value_Master' to 0 for the identified rows
+    df.loc[condition, 'Fecal_Blood_Value_Master'] = 0
+
+    return df
 
 # def encode_column2(df1, df2, column_to_encode, encoded_column_name, df_same):
 
