@@ -170,7 +170,7 @@ IBD_Fecal_Blood["Previous_note_id"] = IBD_Fecal_Blood.progress_apply(
     lambda x: find_previous_note(x[id_column], IBD_Fecal_Blood), axis=1
 )
 
-IBD_Fecal_Blood.to_json(os.path.join(data_folder, "ibd_notes.json"))
+# IBD_Fecal_Blood.to_json(os.path.join(data_folder, "ibd_notes.json"))
 
 # ### Preparing Dataframes for Previous Note Comparison ###
 
@@ -1067,8 +1067,8 @@ IBD_Fecal_Blood['Abdominal_Ambiguity_Label'] = y2_pred
 IBD_Fecal_Blood['Diarrhea_Label'] = y3_pred
 IBD_Fecal_Blood['Diarrhea_Ambiguity_Label'] = y4_pred
 
-label_df = IBD_Fecal_Blood[['deid_note_id', 'deid_PatientDurableKey',
-           'note',
+label_df = IBD_Fecal_Blood[[id_column, patient_durable_key,
+           note_column,
            'Fecal_Blood_Label',
            'Abdominal_Pain_Label',
            'Abdominal_Ambiguity_Label',
